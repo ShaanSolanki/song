@@ -1,0 +1,392 @@
+@import "tailwindcss";
+
+/* ----------------------------------------------------------------------------
+   Satoshi — self-hosted. Drop the .woff2 files into /public/fonts/.
+   If they are missing the browser falls back to the system sans stack below,
+   so the site still works without the licensed font files present.
+---------------------------------------------------------------------------- */
+@font-face {
+  font-family: "Satoshi";
+  src: url("/fonts/Satoshi-Black.woff2") format("woff2");
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Satoshi";
+  src: url("/fonts/Satoshi-Bold.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Satoshi";
+  src: url("/fonts/Satoshi-Medium.woff2") format("woff2");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Satoshi";
+  src: url("/fonts/Satoshi-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@theme inline {
+  --color-ink: #0a0a0a;
+  --color-paper: #f1f1f1;
+  --color-hair: #606060;
+
+  --font-sans: "Satoshi", ui-sans-serif, system-ui, -apple-system, "Segoe UI",
+    Roboto, Helvetica, Arial, sans-serif;
+
+  /* shadcn-style oklch tokens, forced permanently dark */
+  --color-background: oklch(0.13 0 0);
+  --color-foreground: oklch(0.95 0 0);
+  --color-muted: oklch(0.2 0 0);
+  --color-muted-foreground: oklch(0.62 0 0);
+  --color-border: oklch(0.45 0 0);
+  --color-ring: oklch(0.95 0 0);
+  --radius: 1.25rem;
+}
+
+* {
+  border-color: var(--color-border);
+}
+
+html,
+body {
+  background-color: #0a0a0a;
+  color: #f1f1f1;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-sans);
+  font-weight: 500;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: clip;
+}
+
+::selection {
+  background: #f1f1f1;
+  color: #0a0a0a;
+}
+
+/* Font-weight utility classes mirroring the brief's Satoshi families */
+.font-Satoshi-Black {
+  font-family: var(--font-sans);
+  font-weight: 900;
+}
+.font-Satoshi-Bold {
+  font-family: var(--font-sans);
+  font-weight: 700;
+}
+.font-Satoshi-Medium {
+  font-family: var(--font-sans);
+  font-weight: 500;
+}
+.font-Satoshi-Regular {
+  font-family: var(--font-sans);
+  font-weight: 400;
+}
+
+/* Thin hairline */
+.hairline {
+  border-color: var(--color-hair);
+}
+
+/* Glass card surface */
+.glass {
+  border: 1px solid var(--color-hair);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  background: rgba(255, 255, 255, 0.012);
+}
+
+/* Subtle film grain overlay */
+.grain::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+  opacity: 0.04;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* The letter-flip / mask-reveal heading primitives */
+.flip-line {
+  display: block;
+  overflow: hidden;
+}
+.char {
+  display: inline-flex;
+  overflow: hidden;
+  vertical-align: top;
+}
+.char > span {
+  display: inline-block;
+  will-change: transform;
+}
+
+/* Hover letter-flip: top glyph slides out, duplicate slides up */
+.flip-hover .char {
+  position: relative;
+}
+.flip-hover .char > .glyph-top,
+.flip-hover .char > .glyph-bottom {
+  transition: transform 0.4s cubic-bezier(0.76, 0, 0.24, 1);
+}
+.flip-hover .char > .glyph-bottom {
+  position: absolute;
+  left: 0;
+  top: 0;
+  transform: translateY(100%);
+}
+.flip-hover:hover .char > .glyph-top {
+  transform: translateY(-100%);
+}
+.flip-hover:hover .char > .glyph-bottom {
+  transform: translateY(0);
+}
+
+/* EQ bars indicator */
+@keyframes eq-bounce {
+  0%,
+  100% {
+    transform: scaleY(0.25);
+  }
+  50% {
+    transform: scaleY(1);
+  }
+}
+.eq-bar {
+  transform-origin: bottom;
+  animation: eq-bounce 0.9s ease-in-out infinite;
+}
+
+/* Slow marquee */
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+.marquee-track {
+  animation: marquee 38s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .eq-bar,
+  .marquee-track,
+  .spin {
+    animation: none !important;
+  }
+  .flip-hover .char > .glyph-top,
+  .flip-hover .char > .glyph-bottom {
+    transition: none !important;
+  }
+}
+
+@keyframes spin-slow {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.spin {
+  animation: spin-slow 8s linear infinite;
+}
+.spin.paused {
+  animation-play-state: paused;
+}
+
+/* ============================================================================
+   Scroll-choreography effects — ported 1:1 from the movie-clone (theartofcinema)
+   so the song site presents identically. Covers are SQUARE (1/1) album art.
+============================================================================ */
+
+/* ===== effect033: horizontal cover track (TrackSection) ===== */
+.mwg_effect033 {
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  position: relative;
+}
+.mwg_effect033 .scroll {
+  pointer-events: none;
+  width: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+.mwg_effect033 .container {
+  white-space: nowrap;
+  will-change: transform;
+  align-items: center;
+  width: max-content;
+  height: 100%;
+  padding: 0 110vw;
+  display: flex;
+}
+.mwg_effect033 .medias {
+  grid-template-rows: repeat(3, auto);
+  grid-auto-flow: column;
+  align-items: center;
+  gap: 4vw;
+  height: auto;
+  display: grid;
+  position: relative;
+}
+.mwg_effect033 .media {
+  will-change: transform;
+  flex-shrink: 0;
+  width: 15vw;
+  min-width: 15vw;
+  height: 15vw;
+  min-height: 15vw;
+  display: block;
+  position: relative;
+  border-radius: 0.6vw;
+  overflow: hidden;
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+/* ===== effect018: stacked deck (ClassicsSection) ===== */
+.mwg_effect018 .pin-height {
+  height: 300vh;
+}
+.mwg_effect018 .container {
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  padding: 0 0 0 12vw;
+  display: flex;
+  position: sticky;
+  top: 0;
+}
+.mwg_effect018 .card {
+  aspect-ratio: 1 / 1;
+  backdrop-filter: blur(6px);
+  border: 1px solid var(--color-hair);
+  border-radius: 1vw;
+  width: 22vw;
+  margin: 0 0 0 -6vw;
+  padding: 0.8vw;
+  display: flex;
+  will-change: transform;
+  cursor: pointer;
+}
+.mwg_effect018 .card:first-child {
+  margin-left: 0;
+}
+.mwg_effect018 .card .media {
+  border-radius: 0.8vw;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+}
+
+/* ===== effect003: rotating wheel (FavoritesSection) ===== */
+.mwg_effect003 {
+  position: relative;
+  overflow: clip;
+}
+.mwg_effect003 .pin-height {
+  height: 300vh;
+}
+.mwg_effect003 .container {
+  height: 100vh;
+  position: sticky;
+  top: 0;
+  overflow: clip;
+}
+.mwg_effect003 .circles {
+  position: absolute;
+  inset: 0;
+}
+.mwg_effect003 .card {
+  aspect-ratio: 1 / 1;
+  will-change: transform;
+  backdrop-filter: blur(6px);
+  border: 1px solid var(--color-hair);
+  border-radius: 1vw;
+  width: 20vw;
+  padding: 0.8vw;
+  overflow: hidden;
+  position: absolute;
+  top: 0;
+  left: 0;
+  cursor: pointer;
+}
+.mwg_effect003 .card .media {
+  border-radius: 0.6vw;
+  width: 100%;
+  height: 100%;
+  display: block;
+  overflow: hidden;
+}
+
+/* ===== effect029: quote word reveal (QuoteSection) ===== */
+.mwg_effect029 {
+  padding: 0 0 30vh;
+}
+.mwg_effect029 .wrap {
+  justify-content: space-between;
+  padding: 0 25px;
+  display: flex;
+}
+.mwg_effect029 .paragraph {
+  text-transform: uppercase;
+  width: 50vw;
+  padding: 30vh 0 0;
+}
+.mwg_effect029 .paragraph span {
+  display: inline-block;
+  padding-right: 0.28em;
+}
+.mwg_effect029 .word1 {
+  padding: 0 0 0 0.8em;
+}
+.mwg_effect029 .word2 {
+  padding: 0 1.6em 0 0;
+}
+.mwg_effect029 .word3 {
+  padding: 0 0 0 2.4em;
+}
+.mwg_effect029 .sticky {
+  padding: 20vh 0 0;
+  position: relative;
+}
+.mwg_effect029 .sticky .stick-img {
+  aspect-ratio: 1 / 1;
+  height: 20vw;
+  position: sticky;
+  top: calc(-25px + 100vh - 20vw);
+  border-radius: 0.5vw;
+  overflow: hidden;
+}
+
+/* ===== Reveal clip-wipe (StoriesSection) ===== */
+.reveal {
+  position: relative;
+  overflow: hidden;
+  border-radius: 0.5rem;
+}
+.reveal .reveal-inner {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
