@@ -5,6 +5,7 @@ import { NowPlayingBar } from "@/components/player/NowPlayingBar";
 import { AmbientGlow } from "@/components/player/AmbientGlow";
 import { Toast } from "@/components/player/Toast";
 import { Navbar } from "@/components/Navbar";
+import { Preloader } from "@/components/Preloader";
 
 export const metadata: Metadata = {
   title: "RESONANCE — Play the Feeling",
@@ -22,6 +23,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="grain antialiased">
+        <Preloader />
         <PlayerProvider>
           <AmbientGlow />
           <Navbar />
